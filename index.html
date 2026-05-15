@@ -8606,5 +8606,207 @@ window.addEventListener('load', function() {
 })();
 </script>
 
+<script>
+(function(){
+  function norm(s){return (s||'').replace(/\s+/g,' ').replace(/<[^>]+>/g,'').toLowerCase();}
+  function infoFor(text){
+    const t=norm(text);
+    const items=[];
+    function add(title,q,use){items.push({title,q,use});}
+
+    // GEO formulas
+    if(t.includes('tan') && (t.includes('apparent') || t.includes('app')) && t.includes('cos')){
+      add('PAST PAPER — CEGE0100 2025 Q1(a)', '“Using a sketch, define apparent dip, true dip, dip direction and strike of a geological feature. Explain why it is not possible to measure the true dip of a bedding plane from a vertical cut, such as a cliff or the side of a gorge.”', 'Use when the question compares true dip vs apparent dip, or asks why a random cliff/gorge section cannot give true dip.');
+    }
+    if((t.includes('t =') || t.includes('thickness')) && t.includes('sin')){
+      add('LECTURER / MAP-SECTION STYLE', '“From a geological map / section, determine the true thickness of a stratum from outcrop width and dip.”', 'Use when outcrop width is measured perpendicular to strike and the question asks true bed thickness. Not directly seen as a standalone formula in the uploaded past papers.');
+    }
+    if(t.includes('tan') && (t.includes('δ') || t.includes('dip')) && (t.includes('h') || t.includes('δh')) && t.includes('l')){
+      add('LECTURER FLAG — Exercise 4 geological map', '“Find strike lines from equal contour crossings, then calculate the dip angle using the height difference and horizontal distance between strike lines.”', 'Use when the question gives contours + geological boundary crossings. Same boundary crosses same contour twice → strike line; dip is perpendicular from high to low.');
+    }
+    if((t.includes('st') || t.includes('s<sub>t')) && (t.includes('w sin') || t.includes('vt cos'))){
+      add('LECTURE / SLOPE-STABILITY STYLE', '“Resolve the weight of a block on a sliding plane and determine the driving shear force.”', 'Use only when the question gives a block/plane and asks driving force parallel to the slope. No direct hit in the uploaded past papers.');
+    }
+
+    // Phase relationships / unit weights
+    if(t.includes('v') && t.includes('π') && t.includes('d') && t.includes('h')){
+      add('PAST PAPER — CEGE0100 2025 Q3(a)', '“The soil sample measures 50 mm diameter and 100 mm height… determine dry unit weight and saturated unit weight using direct measurements of dimensions and mass.”', 'Use first when dimensions of a cylindrical specimen are given. Convert mm→m and g→kg.');
+    }
+    if(t.includes('w =') && (t.includes('mw') || t.includes('m_w') || t.includes('m_{wet}') || t.includes('wet'))){
+      add('PAST PAPER — CEGE0100 2025 Q3(a)(i)', '“The specimen is saturated, weighs 415 g, then oven dried and weighed again at 297 g. Determine the soil’s water content.”', 'Use when wet mass and dry mass are given. Water mass = wet − dry; divide by dry mass.');
+      add('QUIZ / LAB STYLE', '“Calculate plastic limit from wet and dry masses for several samples.”', 'Use separately for each sample, then average the water contents for PL.');
+    }
+    if(t.includes('gs') || t.includes('g<sub>s') || t.includes('ρs') || t.includes('rho')){
+      if(t.includes('ρ') || t.includes('rho') || t.includes('specific gravity') || t.includes('g<sub>s') || t.includes('gs')){
+        add('PAST PAPER — CEGE0100 2024 Q1(a)', '“The density of sand retrieved from a future construction site is 2.67 g/cc. Determine the soil’s specific gravity, Gs.”', 'Use when grain density / particle density is given. Gs = density of solids / density of water.');
+      }
+    }
+    if(t.includes('γ') && (t.includes('w / v') || t.includes('mg') || t.includes('rho g') || t.includes('ρg'))){
+      add('PAST PAPER — CEGE0100 2025 Q3(a)', '“Determine dry unit weight and saturated unit weight using direct measurements of dimensions and mass.”', 'Use when total mass/weight and sample volume are directly measurable.');
+    }
+    if(t.includes('γ') && t.includes('d') && (t.includes('ws') || t.includes('g_s') || t.includes('1 + e') || t.includes('1+e'))){
+      add('PAST PAPER — CEGE0100 2024 Q1(b,c)', '“850 g of dry sand is poured into a circular graduated container… determine dry unit weight and void ratio.”', 'Use when dry mass/volume are given or when void ratio is needed from dry unit weight.');
+      add('PAST PAPER — CEGE0100 2025 Q3(a)(ii)', '“Determine the soil’s dry unit weight.”', 'Use dry mass after oven drying and total specimen volume.');
+    }
+    if(t.includes('γ') && t.includes('sat')){
+      add('PAST PAPER — CEGE0100 2024 Q1(d)', '“Water fills all the voids and the void ratio is assumed unchanged. Calculate saturated unit weight.”', 'Use when soil is saturated and you know Gs and e.');
+      add('PAST PAPER — CEGE0100 2025 Q3(a)(iii)', '“Determine the saturated unit weight.”', 'Use saturated mass / specimen volume if direct measurements are given.');
+    }
+    if(t.includes('e = wg') || (t.includes('e') && t.includes('w') && t.includes('g<sub>s'))){
+      add('PAST PAPER — CEGE0100 2025 Q3 / CEGE0013 Q3', '“Given water content and Gs for saturated soil, calculate void ratio / critical state variables.”', 'Use only if the soil is saturated. e = wGs, with w as decimal, not percent.');
+    }
+    if(t.includes('e =') && (t.includes('vv') || t.includes('v<sub>v') || t.includes('vs') || t.includes('v<sub>s'))){
+      add('PAST PAPER — CEGE0100 2024 Q1(c,e)', '“Determine the void ratio of loose dry sand… then after shaking, determine the void ratio in the dense state.”', 'Use when asked for void ratio. Find total volume, solid volume, then void volume.');
+    }
+    if(t.includes('n =') && t.includes('1')){
+      add('LECTURER FLAG — phase relationships', '“Given void ratio, determine porosity / describe phase relationships.”', 'Use when asked to convert between e and n. Not a main standalone past-paper part in the uploaded set.');
+    }
+    if(t.includes('sr') || t.includes('s<sub>r')){
+      add('LECTURER FLAG — phase relationships', '“State or calculate degree of saturation.”', 'Use when the question asks how much of the void space is filled with water. If saturated, Sr = 1.');
+    }
+
+    // Atterberg / plasticity
+    if(t.includes('pi') || t.includes('w_l') || t.includes('w<sub>l') || t.includes('w_p') || t.includes('w<sub>p')){
+      add('PAST PAPER — CEGE0100 2025 Q3(d)', '“Plastic limit wP = 17.7% and liquid limit wL = 42.1%. Calculate PI. What does PI define? If in-situ water content is 37%, what does it tell you about consistency?”', 'Use when LL and PL are given. PI = LL − PL. Then compare natural water content with PL and LL.');
+    }
+    if(t.includes('activity') || t.includes('a =') && t.includes('clay')){
+      add('LECTURER FLAG — Atterberg + clay mineralogy', '“Given PI and % clay, calculate activity and comment on likely clay mineral type.”', 'Use when PI and clay fraction are both given.');
+    }
+
+    // PSD
+    if(t.includes('cu') || t.includes('d60') || t.includes('d<sub>60') || t.includes('d10') || t.includes('d<sub>10')){
+      add('QUIZ / LECTURER FLAG — PSD graph', '“Given sieve sizes and mass retained, calculate % passing, plot PSD on semi-log graph, read D10/D50/D60, calculate coefficient of uniformity.”', 'Use when the question gives sieve table or PSD graph. Draw/read horizontally from % passing to curve, then down to particle size.');
+    }
+    if(t.includes('% passing') || t.includes('cumulative')){
+      add('QUIZ / LECTURER FLAG — sieve table', '“Convert mass retained on each sieve into percentage passing values for plotting PSD.”', 'Use when table gives mass retained, not % finer. Total mass → % retained → cumulative retained → % passing.');
+    }
+
+    // Water / seepage / flow net
+    if(t.includes('h =') && t.includes('z') && t.includes('u')){
+      add('PAST PAPER — CEGE0100 2024 Q2(b)', '“At points A, B, C, D, E determine the hydraulic head.”', 'Use when seepage/flow net points are given. H = elevation head + pressure head.');
+      add('PAST PAPER — CEGE0100 2025 Q4(b)', '“Using the flow net in Figure Q4, determine the pore water pressure at A, C, E.”', 'First get head from equipotential drops, then use u = γw(H − z).');
+    }
+    if(t.includes('u =') && (t.includes('γ') || t.includes('gamma')) && (t.includes('h') || t.includes('z'))){
+      add('PAST PAPER — CEGE0100 2024 Q2(c)', '“At each point A, B, C, D, E determine the pore water pressure.”', 'Use after you know hydraulic head H and elevation z.');
+      add('PAST PAPER — CEGE0100 2025 Q4(b)', '“Using the flow net, determine pore water pressure at A, C, E.”', 'u = γw(H − z). If H = z, u = 0 at water surface/atmospheric boundary.');
+    }
+    if((t.includes('i =') || t.includes('gradient')) && t.includes('h')){
+      add('PAST PAPER — CEGE0100 2025 Q4(d)', '“Is there a risk of liquefaction at D?”', 'Use for hydraulic gradient / exit gradient. Compare i with critical gradient, or check σ′v ≤ 0.');
+    }
+    if(t.includes('v = ki') || t.includes('q = kia')){
+      add('PAST PAPER — CEGE0100 2024 Q2(a)', '“Draw the flownet and calculate total flow of water under the wall per day per unit metre.”', 'Use Darcy law / flow net when k, Δh, Nc, Ne are given or can be counted.');
+      add('PAST PAPER — CEGE0100 2025 Q4(c,e)', '“Calculate the total flow through the soil… estimate flow if water level is raised and draw new flow net.”', 'Use q = k Δh Nc/Ne per metre length.');
+    }
+    if(t.includes('q =') && t.includes('nc') && t.includes('ne')){
+      add('PAST PAPER — CEGE0100 2024 Q2(a)', '“Draw the flownet and calculate total flow of water under the wall, per day per unit metre.”', 'Use when a flownet is drawn/countable: Nc = flow channels, Ne = potential drops. Convert m³/s to m³/day with ×86400.');
+      add('PAST PAPER — CEGE0100 2025 Q4(c,e)', '“Calculate total flow through soil and redraw flow net if head changes.”', 'Use the same formula; raising upstream head increases Δh and may change Ne/Nc depending on new flownet.');
+    }
+    if(t.includes('ic') || t.includes('i<sub>c') || t.includes('critical')){
+      add('PAST PAPER — CEGE0100 2025 Q4(d)', '“Point D is located 1.4 m beneath the ground surface in front of the wall. Is there a risk of liquefaction at D?”', 'Use when upward seepage may reduce effective stress. Risk if i ≥ ic or σ′v ≤ 0.');
+    }
+
+    // Stress
+    if(t.includes('σ') && t.includes('v') && t.includes('Σ')){
+      add('PAST PAPER — CEGE0100 2025 Q4(a)', '“Determine the total vertical stress at A, C, and E.”', 'Use total unit weight times depth from ground surface, adding layers cumulatively.');
+      add('PAST PAPER — CEGE0100 2024 Q2(d)', '“At each point A, B, C, D, E determine the total vertical stress.”', 'Use depth below local ground level and relevant unit weights.');
+    }
+    if(t.includes('σ') && t.includes('=') && t.includes('u') && (t.includes('prime') || t.includes('′') || t.includes("'"))){
+      add('PAST PAPER — CEGE0100 2025 Q3(b,c)', '“Draw the profile of effective vertical stress with depth… then after water table drawdown, find effective stress at 6 m.”', 'Use σ′v = σv − u. Lowering water table usually increases effective stress below the new water table.');
+      add('PAST PAPER — CEGE0100 2024 Q2(e)', '“At each point A, B, C, D, E determine the effective vertical stress.”', 'Calculate total stress and pore pressure first, then subtract.');
+    }
+
+    // Mohr / Triaxial
+    if(t.includes('σθ') || t.includes('tau') || t.includes('τ') || t.includes('cos2') || t.includes('sin2')){
+      add('PAST PAPER — CEGE0100 2024 Q3(e)', '“Using the Mohr-Coulomb circle, derive the shear stress and effective normal stress on the failure plane and calculate critical state friction angle.”', 'Use when asked stresses on an inclined failure plane. Remember Mohr circle uses 2θ.');
+    }
+    if(t.includes('p') && t.includes('q') && (t.includes('σ') || t.includes('sigma'))){
+      add('PAST PAPER — CEGE0100 2024 Q3(a)', '“Plot the effective stress path on axes p′, q, and the stress-strain curve q versus axial strain.”', 'Use in triaxial tests. q = deviator stress; p′ = mean effective stress.');
+      add('PAST PAPER — CEGE0100 2024 Q4(b,c)', '“Plot Mohr-Coulomb failure line in p′ vs q and add stress paths for compression and extension.”', 'Use when the axes are p′ and q.');
+    }
+    if(t.includes('ε') || t.includes('strain') || t.includes('delta h') || t.includes('h0')){
+      add('PAST PAPER — CEGE0100 2024 Q3(a,b)', '“Plot q versus axial strain and determine undrained Young’s modulus corresponding to half the strength.”', 'Use shortening / initial height to calculate axial strain.');
+    }
+    if(t.includes('a =') && t.includes('δu')){
+      add('PAST PAPER — CEGE0100 2024 Q3(c)', '“Calculate the pore pressure parameter A corresponding to half of the strength.”', 'Use at half strength during undrained triaxial shearing.');
+    }
+    if(t.includes('v = n') || (t.includes('λ') && t.includes('ln'))){
+      add('PAST PAPER — CEGE0013 2023/2024/2025 Q3(a)', '“Data from isotropic loading and unloading of soft clay are shown. Calculate critical state parameters N, λ and κ.”', 'Use if critical-state compression curve appears. v = 1 + e, then plot/fit v against ln p′.');
+    }
+
+    // Unit traps
+    if(t.includes('1 kpa') || t.includes('86400') || t.includes('g/cm') || t.includes('γ = ρg')){
+      add('PAST-PAPER UNIT TRAP', '“Convert density/mass/volume/flow into the requested engineering units.”', 'Use in almost every calculation. Common traps: g→kg, mm→m, N/m³→kN/m³, m³/s→m³/day.');
+    }
+
+    if(items.length===0){
+      add('NO DIRECT PAST-PAPER MATCH FOUND', 'This formula was kept as lecture/support material, but I did not find a direct uploaded past-paper wording for it.', 'Use only if the question wording clearly asks for this variable.');
+    }
+    return items;
+  }
+
+  function detailHTML(items){
+    return '<div class="formula-pastpaper-box"><div class="formula-pastpaper-title">Past-paper wording / متى أستخدمه</div>'+
+      items.map(it=>'<div class="formula-pastpaper-item"><b>'+it.title+'</b><p>'+it.q+'</p><p><span>Use:</span> '+it.use+'</p></div>').join('')+
+      '</div>';
+  }
+
+  function enhanceFormulas(){
+    if(!document.getElementById('formulaClickStyles')){
+      const st=document.createElement('style');
+      st.id='formulaClickStyles';
+      st.textContent=`
+        .formula-clickable{cursor:pointer;position:relative;transition:all .18s ease;}
+        .formula-clickable:hover{outline:1px solid rgba(245,158,11,.55);box-shadow:0 0 0 3px rgba(245,158,11,.08);transform:translateY(-1px)}
+        .formula-clickable::after{content:' click for past-paper wording';font-family:var(--font-body);font-size:10px;color:var(--teal);margin-left:8px;font-weight:700;white-space:nowrap}
+        .formula-pastpaper-box{display:none;background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.32);border-radius:10px;padding:12px 14px;margin:10px 0 14px;animation:fadeUp .2s ease;}
+        .formula-pastpaper-box.show{display:block;}
+        .formula-pastpaper-title{font-family:var(--font-head);font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+        .formula-pastpaper-item{border-top:1px solid rgba(255,255,255,.08);padding-top:8px;margin-top:8px;}
+        .formula-pastpaper-item:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+        .formula-pastpaper-item b{color:var(--amber);font-size:12px;}
+        .formula-pastpaper-item p{font-size:13px;line-height:1.55;color:var(--text);margin:5px 0;}
+        .formula-pastpaper-item span{color:var(--green);font-weight:800;}
+        .formula-click-note{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:10px;padding:11px 14px;margin:12px 0 18px;color:var(--text);font-size:13px;}
+      `;
+      document.head.appendChild(st);
+    }
+
+    const pages=['#page-formulas','#page-soilformulas','#page-soil','#page-soilpapers','#page-quizgraphs'];
+    pages.forEach(sel=>{
+      const page=document.querySelector(sel);
+      if(page && !page.querySelector('.formula-click-note')){
+        const sub=page.querySelector('.page-sub');
+        if(sub){
+          const note=document.createElement('div');
+          note.className='formula-click-note';
+          note.innerHTML='اضغط أي قانون عشان يطلع لك <b>صياغة سؤال من الباست بيبر أو كويز/lecturer flag</b> + متى تستخدمه.';
+          sub.insertAdjacentElement('afterend', note);
+        }
+      }
+    });
+
+    const targets=[...document.querySelectorAll('.formula-card .formula-block, .soil-formula-sheet .fline, #page-soil .formula-block, #page-soilpapers .formula-block, #page-quizgraphs .formula-block')];
+    targets.forEach(el=>{
+      if(el.dataset.formulaClickable==='1') return;
+      el.dataset.formulaClickable='1';
+      el.classList.add('formula-clickable');
+      const box=document.createElement('div');
+      box.innerHTML=detailHTML(infoFor(el.textContent));
+      const detail=box.firstElementChild;
+      el.insertAdjacentElement('afterend', detail);
+      el.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        detail.classList.toggle('show');
+      });
+    });
+  }
+
+  window.addEventListener('load', function(){
+    [300,900,1600,2600].forEach(ms=>setTimeout(enhanceFormulas,ms));
+  });
+  window.enhanceFormulaPastPaperClicks=enhanceFormulas;
+})();
+
+</script>
 </body>
 </html>
